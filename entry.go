@@ -2,6 +2,7 @@ package clog
 
 import (
 	"bytes"
+	"github.com/bournex/ordered_container"
 	"runtime"
 	"strings"
 	"time"
@@ -10,7 +11,7 @@ import (
 type Entry struct {
 	logger *logger
 	Buffer *bytes.Buffer
-	Map    map[string]interface{}
+	Map    ordered_container.OrderedMap
 	Level  Level
 	Time   time.Time
 	File   string
@@ -24,7 +25,7 @@ func entry(logger *logger) *Entry {
 	return &Entry{
 		logger: logger,
 		Buffer: new(bytes.Buffer),
-		Map:    make(map[string]interface{}, 5),
+		Map:    ordered_container.OrderedMap{Values: make([]ordered_container.OrderedValue, 5)},
 	}
 }
 
@@ -58,7 +59,9 @@ func (e *Entry) format() {
 func (e *Entry) writer() {
 	e.logger.mu.Lock()
 	defer e.logger.mu.Unlock()
-	_, _ = e.logger.opt.output.Write(e.Buffer.Bytes())
+	for _, w := range e.logger.opt.output {
+		_, _ = w.Write(e.Buffer.Bytes())
+	}
 }
 
 func (e *Entry) release() {

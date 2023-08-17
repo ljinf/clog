@@ -2,6 +2,7 @@ package clog
 
 import (
 	"fmt"
+	"github.com/bournex/ordered_container"
 	jsoniter "github.com/json-iterator/go"
 	"strconv"
 	"time"
@@ -13,18 +14,16 @@ type JsonFormatter struct {
 
 func (f *JsonFormatter) Format(e *Entry) error {
 	if !f.IgnoreBasicFields {
-		e.Map["level"] = LevelNameMapping[e.Level]
-		e.Map["time"] = e.Time.Format(time.RFC3339)
-		if e.File != "" {
-			e.Map["file"] = e.File + ":" + strconv.Itoa(e.Line)
-			e.Map["func"] = e.Func
-		}
+		e.Map.Values[0] = ordered_container.OrderedValue{Key: "level", Value: LevelNameMapping[e.Level]}
+		e.Map.Values[1] = ordered_container.OrderedValue{Key: "time", Value: e.Time.Format(time.RFC3339)}
+		e.Map.Values[2] = ordered_container.OrderedValue{Key: "file", Value: e.File + ":" + strconv.Itoa(e.Line)}
+		e.Map.Values[3] = ordered_container.OrderedValue{Key: "func", Value: e.Func}
 
 		switch e.Format {
 		case FmtEmptySeparate:
-			e.Map["message"] = fmt.Sprint(e.Args...)
+			e.Map.Values[4] = ordered_container.OrderedValue{Key: "message", Value: fmt.Sprint(e.Args...)}
 		default:
-			e.Map["message"] = fmt.Sprintf(e.Format, e.Args...)
+			e.Map.Values[4] = ordered_container.OrderedValue{Key: "message", Value: fmt.Sprintf(e.Format, e.Args...)}
 		}
 
 		return jsoniter.NewEncoder(e.Buffer).Encode(e.Map)

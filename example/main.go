@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ljinf/clog"
+	"github.com/ljinf/log"
 	"log"
 	"os"
 )
@@ -21,9 +21,10 @@ func main() {
 
 	logger := clog.New(
 		clog.WithLevel(clog.InfoLevel),
-		clog.WithOutput(file),
+		clog.WithOutput(os.Stdout, file), //out to console and file
 		clog.WithFormatter(&clog.JsonFormatter{IgnoreBasicFields: false}),
 	)
 	logger.Debug("debug log")
 	logger.Info("custom log with json formatter")
+	logger.Error("error log")
 }

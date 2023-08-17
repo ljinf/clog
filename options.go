@@ -67,7 +67,7 @@ func (l *Level) UnmarshalText(text []byte) error {
 
 //log option
 type options struct {
-	output        io.Writer
+	output        []io.Writer //多个输出
 	level         Level
 	stdLevel      Level
 	formatter     Formatter
@@ -82,7 +82,7 @@ func initOptions(opts ...Option) *options {
 		opt(o)
 	}
 	if o.output == nil {
-		o.output = os.Stdout
+		o.output = []io.Writer{os.Stdout}
 	}
 	if o.formatter == nil {
 		o.formatter = &TextFormatter{}
@@ -90,7 +90,7 @@ func initOptions(opts ...Option) *options {
 	return o
 }
 
-func WithOutput(output io.Writer) Option {
+func WithOutput(output ...io.Writer) Option {
 	return func(o *options) {
 		o.output = output
 	}

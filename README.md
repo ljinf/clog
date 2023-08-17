@@ -1,2 +1,2 @@
-# clog
+# log
 go log
