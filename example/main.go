@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/ljinf/log"
-	"log"
 	"os"
 )
 
