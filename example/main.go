@@ -7,9 +7,9 @@ import (
 )
 
 func main() {
-	clog.Info("std log")
-	clog.SetOptions(clog.WithLevel(clog.DebugLevel))
-	clog.Debug("change std log to debug level")
+	log.Info("std log")
+	log.SetOptions(log.WithLevel(log.DebugLevel))
+	log.Debug("change std log to debug level")
 
 	//输出到文件
 	file, err := os.OpenFile("test.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -19,10 +19,10 @@ func main() {
 	}
 	defer file.Close()
 
-	logger := clog.New(
-		clog.WithLevel(clog.InfoLevel),
-		clog.WithOutput(os.Stdout, file), //out to console and file
-		clog.WithFormatter(&clog.JsonFormatter{IgnoreBasicFields: false}),
+	logger := log.New(
+		log.WithLevel(log.InfoLevel),
+		log.WithOutput(os.Stdout, file), //out to console and file
+		log.WithFormatter(&log.JsonFormatter{IgnoreBasicFields: false}),
 	)
 	logger.Debug("debug log")
 	logger.Info("custom log with json formatter")
